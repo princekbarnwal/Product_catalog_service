@@ -6,9 +6,9 @@ const app=express();
 app.use(express.json());
 connectdb();
 
-const arr=[{id: 1, name: "rabdi", price: 20},
-        {id: 2, name: "jalebi", price: 10}
-    ];
+// const arr=[{id: 1, name: "rabdi", price: 20},
+//         {id: 2, name: "jalebi", price: 10}
+//     ];
 
 app.get('/products',async (req,res)=>{
     try {
@@ -75,7 +75,4 @@ app.delete('/products/:id', async (req,res)=>{
     }
 });
 
-let port_number=3000;
-app.listen(port_number,()=>{
-    console.log(`Server is Listening at port ${port_number}`);
-})
+export default app;

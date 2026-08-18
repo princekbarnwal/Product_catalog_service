@@ -1,0 +1,27 @@
+version: '3.8'
+
+
+services:
+  app:
+    build: .
+    ports: 
+      - "3000:3000"
+    depends_on: 
+      - mongo1
+      - mongo2
+      - mongo3
+  mongo1:
+    image: mongo:latest
+    command: mongod --replSet rs0
+    ports:
+      - "27017:27017"
+  mongo2:
+    image: mongo:latest
+    command: mongod --replSet rs0
+    ports:
+      - "27018:27017"
+  mongo3:
+    image: mongo:latest
+    command: mongod --replSet rs0
+    ports:
+      - "27019:27017"
