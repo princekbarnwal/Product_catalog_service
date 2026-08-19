@@ -1,5 +1,10 @@
 import request from "supertest"; 
 import app from "./app.js";
+import mongoose from "mongoose";
+
+afterAll(async () => {
+  await mongoose.connection.close();
+});
 
 test('GET /products should return 200', async () => { 
     const response = await request(app).get("/products");
