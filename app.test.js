@@ -1,9 +1,14 @@
 import request from "supertest"; 
 import app from "./app.js";
 import mongoose from "mongoose";
+import { redis } from "./app.js";
 
 afterAll(async () => {
   await mongoose.connection.close();
+});
+
+afterAll(async () => {
+  await redis.quit();
 });
 
 test('GET /products should return 200', async () => { 

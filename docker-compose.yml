@@ -6,10 +6,13 @@ services:
     build: .
     ports: 
       - "3000:3000"
+    # environment:
+    #   REDIS_URL: redis://redis:6379     if we add this then we don't need to use || in app.js
     depends_on: 
       - mongo1
       - mongo2
       - mongo3
+      - redis
   mongo1:
     image: mongo:latest
     command: mongod --replSet rs0
@@ -25,3 +28,7 @@ services:
     command: mongod --replSet rs0
     ports:
       - "27019:27017"
+  redis:
+    image: redis:latest
+    ports: 
+      - "6379:6379"

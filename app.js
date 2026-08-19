@@ -1,6 +1,7 @@
 import express from "express";
 import connectdb from "./db.js";
 import product from "./models/product.js";
+import Redis from "ioredis";
 
 const app=express();
 app.use(express.json());
@@ -10,9 +11,29 @@ await connectdb();
 //         {id: 2, name: "jalebi", price: 10}
 //     ];
 
+const redis = new Redis(process.env.REDIS_URL||"redis://redis:6379");    
+    //  environment:
+    //   REDIS_URL: redis://redis:6379   if we add this in docker-compose we don't need to use "redis://redis:6379" this explicitly means no || operation
+
+redis.on("connect", ()=>{
+    console.log("Redis connected Successfully");
+});
+redis.on("error", (error)=>{
+    console.error("Redis error:", error);
+})
+
 app.get('/products',async (req,res)=>{
     try {
+        const cacheproducts = await redis.get("products");
+        if(cacheproducts){
+            console.log("Fetching products from Redis");
+            return res.json(JSON.parse(cacheproducts));
+        }
+        console.log("Fetching products from MongoDB");
+
         const products = await product.find();
+        await redis.set("products",JSON.stringify(products));
+
         res.json(products);
     } catch (error) {
         res.status(500).json({error: "Server Unavailable"});
@@ -41,6 +62,7 @@ app.post('/products',async (req,res)=>{
             name: name,
             price: price
         })
+        await redis.del("products");
         res.status(201).json(newproduct);
     } catch (error) {
         res.status(500).json({error: "Server Unavailable"});
@@ -54,6 +76,7 @@ app.put('/products/:id', async (req,res)=>{
             res.status(404).json({error: "Product not found"})
         }
         else{
+            await redis.del("products");
             res.json(updatedproduct);
         }
     } catch (error) {
@@ -68,6 +91,7 @@ app.delete('/products/:id', async (req,res)=>{
             res.status(404).json({error: "Product not found"})
         }
         else{
+            await redis.del("products");
             res.status(200).json({message: "Product deleted successfully"})
         }
     } catch (error) {
@@ -75,4 +99,5 @@ app.delete('/products/:id', async (req,res)=>{
     }
 });
 
+export { redis };
 export default app;
