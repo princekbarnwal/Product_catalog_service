@@ -4,7 +4,7 @@ import product from "./models/product.js";
 
 const app=express();
 app.use(express.json());
-connectdb();
+await connectdb();
 
 // const arr=[{id: 1, name: "rabdi", price: 20},
 //         {id: 2, name: "jalebi", price: 10}
