@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import connectdb from "./db.js";
 import product from "./models/product.js";
@@ -6,10 +7,6 @@ import Redis from "ioredis";
 const app=express();
 app.use(express.json());
 await connectdb();
-
-// const arr=[{id: 1, name: "rabdi", price: 20},
-//         {id: 2, name: "jalebi", price: 10}
-//     ];
 
 const redis = new Redis(process.env.REDIS_URL||"redis://redis:6379");    
     //  environment:
@@ -32,7 +29,7 @@ app.get('/products',async (req,res)=>{
         console.log("Fetching products from MongoDB");
 
         const products = await product.find();
-        await redis.set("products",JSON.stringify(products));
+        await redis.set("products",JSON.stringify(products),"EX", 900);
 
         res.json(products);
     } catch (error) {

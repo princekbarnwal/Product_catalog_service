@@ -8,6 +8,7 @@ async function connectdb() {
 
     } catch (error) {
         console.error("error fetching data:",error);
+        process.exit(1);
     }
 }
 
