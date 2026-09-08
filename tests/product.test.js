@@ -1,7 +1,12 @@
 import request from "supertest"; 
-import app from "./app.js";
+import app from "../src/app.js";
 import mongoose from "mongoose";
-import { redis } from "./app.js";
+import redis from "../src/config/redis.js";
+import connectdb from "../src/config/db.js";
+
+beforeAll(async () => {
+    await connectdb();
+})
 
 afterAll(async () => {
   await mongoose.connection.close();
@@ -36,5 +41,3 @@ test('Full CRUD flow: create, update, delete a product', async () => {
     expect(getresponse.status).toBe(404);
 
  },20000);
-
- 
