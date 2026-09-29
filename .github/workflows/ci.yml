@@ -20,5 +20,5 @@ jobs:
       - run: npm install
       - run: npm test
         env:
-          MONGO_URI: mongodb://localhost:27017/product_catalog_service
-          REDIS_URL: redis://localhost:6379
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          REDIS_URL: ${{ secrets.REDIS_URL}}
